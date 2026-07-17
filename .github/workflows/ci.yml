@@ -34,3 +34,6 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t devsecops-portfolio:test .
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
