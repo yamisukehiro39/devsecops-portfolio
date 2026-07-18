@@ -1,0 +1,96 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  publish-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+  deploy-vps:
+    needs: publish-image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure and verify SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_FINGERPRINT: ${{ secrets.VPS_FINGERPRINT }}
+        run: |
+          set -Eeuo pipefail
+
+          install -m 700 -d "$HOME/.ssh"
+
+          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/.ssh/deploy_key"
+          chmod 600 "$HOME/.ssh/deploy_key"
+
+          ssh-keyscan -T 10 -t ed25519 "$VPS_HOST" \
+            > "$HOME/.ssh/known_hosts.scan"
+
+          ACTUAL_FINGERPRINT="$(
+            ssh-keygen -lf "$HOME/.ssh/known_hosts.scan" -E sha256 |
+            awk '{print $2}'
+          )"
+
+          if [ "$ACTUAL_FINGERPRINT" != "$VPS_FINGERPRINT" ]; then
+            echo "SSH host fingerprint mismatch."
+            exit 1
+          fi
+
+          mv "$HOME/.ssh/known_hosts.scan" "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+      - name: Deploy image to Lightsail
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE_TAG: ${{ github.sha }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          set -Eeuo pipefail
+
+          printf '%s\n' "$GHCR_TOKEN" |
+            ssh \
+              -i "$HOME/.ssh/deploy_key" \
+              -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes \
+              "$VPS_USER@$VPS_HOST" \
+              "sudo /usr/local/sbin/deploy-portfolio '$IMAGE_TAG'"
+
+      - name: Remove temporary SSH key
+        if: always()
+        run: rm -f "$HOME/.ssh/deploy_key"
