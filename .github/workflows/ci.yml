@@ -15,7 +15,8 @@ on:
       - main
 
 jobs:
-  quality-build-security:
+  quality-and-build:
+    name: Quality, build and security
     runs-on: ubuntu-latest
 
     steps:
