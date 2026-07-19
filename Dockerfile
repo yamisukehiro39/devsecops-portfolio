@@ -1,22 +1,15 @@
-FROM node:22-alpine
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
-# Update npm to fix picomatch and sigstore vulnerabilities
-RUN npm install --global npm@11.18.0
-
 COPY package*.json ./
+RUN npm ci
 
-RUN npm ci --omit=dev \
-    && npm cache clean --force
+COPY . .
+RUN npm run build
 
-COPY src ./src
+FROM nginx:alpine
 
-ENV NODE_ENV=production
-ENV PORT=3000
+COPY --from=build /app/dist /usr/share/nginx/html
 
-EXPOSE 3000
-
-USER node
-
-CMD ["npm", "start"]
+EXPOSE 80
