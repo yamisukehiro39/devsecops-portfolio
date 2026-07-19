@@ -1,110 +1,126 @@
-name: CD
+name: CI
+
+permissions:
+  contents: read
+  pull-requests: read
 
 on:
   push:
     branches:
       - main
-
-permissions:
-  contents: read
-  packages: write
-
-concurrency:
-  group: production
-  cancel-in-progress: false
-
-env:
-  REGISTRY: ghcr.io
-  FRONTEND_IMAGE: ${{ github.repository }}-frontend
-  BACKEND_IMAGE: ${{ github.repository }}-backend
+      - "feature/**"
+      - "fix/**"
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  publish-image:
+  quality-and-build:
+    name: Quality, build and security
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v4
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Build and publish frontend image
-        uses: docker/build-push-action@v7
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
 
-      - name: Build and publish backend image
-        uses: docker/build-push-action@v7
-        with:
-          context: ./backend
-          file: ./backend/Dockerfile
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:latest
-            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+      # Frontend dependencies
+      - name: Install frontend dependencies
+        run: npm ci
 
-      
-  deploy-vps:
-    needs: publish-image
-    runs-on: ubuntu-latest
+      # Backend dependencies
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
 
-    steps:
-      - name: Configure and verify SSH
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-          VPS_FINGERPRINT: ${{ secrets.VPS_FINGERPRINT }}
+      # ESLint currently checks frontend and backend
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Build React application
+        run: npm run build
+
+      # Frontend Docker image
+      - name: Build frontend Docker image
         run: |
-          set -Eeuo pipefail
+          docker build \
+            --file Dockerfile \
+            --tag devsecops-portfolio-frontend:test \
+            .
 
-          install -m 700 -d "$HOME/.ssh"
-
-          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/.ssh/deploy_key"
-          chmod 600 "$HOME/.ssh/deploy_key"
-
-          ssh-keyscan -T 10 -t ed25519 "$VPS_HOST" \
-            > "$HOME/.ssh/known_hosts.scan"
-
-          ACTUAL_FINGERPRINT="$(
-            ssh-keygen -lf "$HOME/.ssh/known_hosts.scan" -E sha256 |
-            awk '{print $2}'
-          )"
-
-          if [ "$ACTUAL_FINGERPRINT" != "$VPS_FINGERPRINT" ]; then
-            echo "SSH host fingerprint mismatch."
-            exit 1
-          fi
-
-          mv "$HOME/.ssh/known_hosts.scan" "$HOME/.ssh/known_hosts"
-          chmod 600 "$HOME/.ssh/known_hosts"
-
-      - name: Deploy images to Lightsail
-        env:
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          IMAGE_TAG: ${{ github.sha }}
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
+      # Backend Docker image
+      - name: Build backend Docker image
         run: |
-          set -Eeuo pipefail
+          docker build \
+            --file backend/Dockerfile \
+            --tag devsecops-portfolio-backend:test \
+            backend
 
-          printf '%s\n' "$GHCR_TOKEN" |
-            ssh \
-              -i "$HOME/.ssh/deploy_key" \
-              -o IdentitiesOnly=yes \
-              -o StrictHostKeyChecking=yes \
-              "$VPS_USER@$VPS_HOST" \
-              "sudo /usr/local/sbin/deploy-portfolio '$IMAGE_TAG'"
+      # Validate the backend container and endpoint
+      - name: Start backend container
+        run: |
+          docker run \
+            --detach \
+            --name portfolio-backend-test \
+            --publish 3000:3000 \
+            devsecops-portfolio-backend:test
 
-      - name: Remove temporary SSH key
+      - name: Test backend health endpoint
+        run: |
+          for attempt in {1..10}; do
+            if curl --fail --silent http://127.0.0.1:3000/api/health; then
+              exit 0
+            fi
+
+            sleep 2
+          done
+
+          docker logs portfolio-backend-test
+          exit 1
+
+      - name: Remove backend test container
         if: always()
-        run: rm -f "$HOME/.ssh/deploy_key"
+        run: docker rm --force portfolio-backend-test || true
+
+      # Dependency security
+      - name: Audit frontend dependencies
+        run: npm audit --audit-level=high
+
+      - name: Audit backend dependencies
+        working-directory: backend
+        run: npm audit --audit-level=high
+
+      # Container security
+      - name: Scan frontend image with Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: devsecops-portfolio-frontend:test
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+
+      - name: Scan backend image with Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: devsecops-portfolio-backend:test
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+
+      # Repository security
+      - name: Scan repository for secrets
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
