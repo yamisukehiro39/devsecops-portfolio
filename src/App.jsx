@@ -1,4 +1,5 @@
 import './App.css'
+import LiveDashboard from './LiveDashboard'
 
 const skills = [
   {
@@ -330,6 +331,8 @@ function App() {
             </div>
           </div>
         </section>
+
+        <LiveDashboard />
 
         <section className="section education container">
           <div className="section-label">05 / Education</div>
