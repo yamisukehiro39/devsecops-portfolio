@@ -1,9 +1,48 @@
 services:
-  portfolio:
+  frontend:
     build:
       context: .
-    image: devsecops-portfolio:local
-    container_name: portfolio
+      dockerfile: Dockerfile
+    image: devsecops-portfolio-frontend:local
+    container_name: portfolio-frontend
     ports:
       - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - portfolio-network
     restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: devsecops-portfolio-backend:local
+    container_name: portfolio-backend
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://127.0.0.1:3000/api/health"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - portfolio-network
+    restart: unless-stopped
+
+networks:
+  portfolio-network:
+    driver: bridge
