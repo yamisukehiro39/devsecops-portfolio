@@ -16,47 +16,110 @@ on:
 
 jobs:
   quality-and-build:
+    name: Quality, build and security
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
 
-      - name: Install dependencies
+      # Frontend dependencies
+      - name: Install frontend dependencies
         run: npm ci
 
+      # Backend dependencies
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      # ESLint currently checks frontend and backend
       - name: Run ESLint
         run: npm run lint
 
       - name: Build React application
         run: npm run build
 
-      - name: Build Docker image
-        run: docker build -t devsecops-portfolio:test .
+      # Frontend Docker image
+      - name: Build frontend Docker image
+        run: |
+          docker build \
+            --file Dockerfile \
+            --tag devsecops-portfolio-frontend:test \
+            .
 
-      - name: Scan Docker image with Trivy
+      # Backend Docker image
+      - name: Build backend Docker image
+        run: |
+          docker build \
+            --file backend/Dockerfile \
+            --tag devsecops-portfolio-backend:test \
+            backend
+
+      # Validate the backend container and endpoint
+      - name: Start backend container
+        run: |
+          docker run \
+            --detach \
+            --name portfolio-backend-test \
+            --publish 3000:3000 \
+            devsecops-portfolio-backend:test
+
+      - name: Test backend health endpoint
+        run: |
+          for attempt in {1..10}; do
+            if curl --fail --silent http://127.0.0.1:3000/api/health; then
+              exit 0
+            fi
+
+            sleep 2
+          done
+
+          docker logs portfolio-backend-test
+          exit 1
+
+      - name: Remove backend test container
+        if: always()
+        run: docker rm --force portfolio-backend-test || true
+
+      # Dependency security
+      - name: Audit frontend dependencies
+        run: npm audit --audit-level=high
+
+      - name: Audit backend dependencies
+        working-directory: backend
+        run: npm audit --audit-level=high
+
+      # Container security
+      - name: Scan frontend image with Trivy
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: devsecops-portfolio:test
+          image-ref: devsecops-portfolio-frontend:test
           format: table
           exit-code: "1"
           ignore-unfixed: true
           severity: HIGH,CRITICAL
 
-      - name: Audit dependencies
-        run: npm audit --audit-level=high
-
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      - name: Scan backend image with Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
-          fetch-depth: 0
+          image-ref: devsecops-portfolio-backend:test
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
 
+      # Repository security
       - name: Scan repository for secrets
         uses: gitleaks/gitleaks-action@v3
         env:
