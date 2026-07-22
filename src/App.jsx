@@ -126,6 +126,7 @@ function App() {
             <a href="#skills">Skills</a>
             <a href="#experience">Experience</a>
             <a href="#projects">Projects</a>
+            <a href="/blog">Blog</a>
           </div>
           <a className="button button-small" href="#contact">
             Let's talk
