@@ -3,28 +3,37 @@ import { StaticContentPage } from '../../components/StaticContentPage';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'About Othman El-Mansour and the editorial purpose of this cloud security and DevOps blog.',
+  description:
+    'Learn more about Othman El-Mansour, a Network & Telecommunications Systems Engineering student focused on DevSecOps, cybersecurity, cloud security and networking.',
   alternates: { canonical: '/about' },
 };
 
 export default function AboutPage() {
   return (
     <StaticContentPage
-      eyebrow="ABOUT / EDITORIAL"
-      title="About this site."
-      intro="This portfolio documents my work and publishes practical technical notes about secure, observable infrastructure."
+      eyebrow="ABOUT / PROFILE"
+      title="About Othman El-Mansour."
+      intro="I build and study secure, observable infrastructure across cloud, networks, systems and DevOps workflows."
     >
-      <h2>Who I am</h2>
-      <p>I am Othman El-Mansour, a Network & Telecommunications Systems Engineering student focused on cloud security, DevOps, networking, observability and practical infrastructure security.</p>
+      <h2>Profile</h2>
+      <p>
+        I am Othman El-Mansour, a Network &amp; Telecommunications Systems Engineering student focused on DevSecOps, cloud security, cybersecurity, networking and infrastructure observability.
+      </p>
+
+      <h2>Technical focus</h2>
+      <p>
+        My work connects Linux administration, routing and switching, Kubernetes, CI/CD, monitoring and security controls. I am especially interested in systems that remain understandable and secure under operational pressure.
+      </p>
 
       <h2>What I publish</h2>
-      <p>The blog focuses on lessons, architecture patterns, troubleshooting approaches, security controls and implementation notes that can help readers understand how infrastructure behaves in real environments.</p>
+      <p>
+        The blog contains practical field notes about architecture, troubleshooting, security controls, deployment workflows and lessons learned while building infrastructure projects.
+      </p>
 
       <h2>Editorial approach</h2>
-      <p>Articles are written to be useful rather than promotional. I aim to explain the context behind a technical decision, the trade-offs involved, and the checks that make the result easier to trust.</p>
-
-      <h2>Corrections</h2>
-      <p>Technology changes quickly. If you notice an error or an outdated statement, contact me so I can review and correct it.</p>
+      <p>
+        Articles are written to explain context, trade-offs and implementation decisions. If you notice an error or outdated statement, you can contact me so I can review it.
+      </p>
     </StaticContentPage>
   );
 }

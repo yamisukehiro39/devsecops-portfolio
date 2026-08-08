@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type FormEvent, type ChangeEvent } from 'react';
+import { usePathname } from 'next/navigation';
 import type { BlogCategory, BlogPublication } from '../lib/blog-data';
 
 import {
@@ -283,25 +284,28 @@ function scrollToSection(id: string, closeMenu?: () => void) {
 
 export function SiteHeader({ isBlog = false }: { isBlog?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const isSubpage = isBlog || pathname !== '/';
+  const isBlogPath = pathname === '/blog' || pathname.startsWith('/blog/');
   const sectionLinks = [
-    ['about', 'Profile'],
-    ['experience', 'Experience'],
-    ['projects', 'Projects'],
-    ['skills', 'Stack'],
-    ['contact', 'Contact'],
+    { id: 'about', label: 'Profile', href: '/about' },
+    { id: 'experience', label: 'Experience', href: '/experience' },
+    { id: 'projects', label: 'Projects', href: '/projects' },
+    { id: 'skills', label: 'Stack', href: '/skills' },
+    { id: 'contact', label: 'Contact', href: '/contact' },
   ];
 
   function goHome() {
-    if (isBlog) {
+    if (isSubpage) {
       window.location.assign('/');
       return;
     }
     scrollToSection('top');
   }
 
-  function goToSection(id: string) {
-    if (isBlog) {
-      window.location.assign(`/#${id}`);
+  function goToSection(id: string, href: string) {
+    if (isSubpage) {
+      window.location.assign(href);
       return;
     }
     scrollToSection(id, () => setMenuOpen(false));
@@ -315,12 +319,24 @@ export function SiteHeader({ isBlog = false }: { isBlog?: boolean }) {
           <span className="brand-name">OTHMAN / EL-MANSOUR</span>
         </button>
         <nav className="desktop-nav" aria-label="Primary navigation">
-          {sectionLinks.map(([id, label]) => (
-            <button key={id} className="nav-link" onClick={() => goToSection(id)} data-testid={`link-${id}`}>
+          {sectionLinks.map(({ id, label, href }) => (
+            <a
+              key={id}
+              className={`nav-link ${pathname === href ? 'current' : ''}`}
+              href={isSubpage ? href : `/#${id}`}
+              aria-current={pathname === href ? 'page' : undefined}
+              onClick={(event) => {
+                if (!isSubpage) {
+                  event.preventDefault();
+                  goToSection(id, href);
+                }
+              }}
+              data-testid={`link-${id}`}
+            >
               {label}
-            </button>
+            </a>
           ))}
-          <a className={`nav-link ${isBlog ? 'current' : ''}`} href="/blog" aria-current={isBlog ? 'page' : undefined} data-testid="link-blog">
+          <a className={`nav-link ${isBlogPath ? 'current' : ''}`} href="/blog" aria-current={isBlogPath ? 'page' : undefined} data-testid="link-blog">
             Blog
           </a>
         </nav>
@@ -333,12 +349,24 @@ export function SiteHeader({ isBlog = false }: { isBlog?: boolean }) {
       </div>
       {menuOpen && (
         <nav className="mobile-nav" aria-label="Mobile navigation">
-          {sectionLinks.map(([id, label]) => (
-            <button key={id} className="nav-link" onClick={() => goToSection(id)} data-testid={`mobile-link-${id}`}>
+          {sectionLinks.map(({ id, label, href }) => (
+            <a
+              key={id}
+              className={`nav-link ${pathname === href ? 'current' : ''}`}
+              href={isSubpage ? href : `/#${id}`}
+              aria-current={pathname === href ? 'page' : undefined}
+              onClick={(event) => {
+                if (!isSubpage) {
+                  event.preventDefault();
+                  goToSection(id, href);
+                }
+              }}
+              data-testid={`mobile-link-${id}`}
+            >
               {label}
-            </button>
+            </a>
           ))}
-          <a className={`nav-link ${isBlog ? 'current' : ''}`} href="/blog" aria-current={isBlog ? 'page' : undefined} data-testid="mobile-link-blog">
+          <a className={`nav-link ${isBlogPath ? 'current' : ''}`} href="/blog" aria-current={isBlogPath ? 'page' : undefined} data-testid="mobile-link-blog">
             Blog
           </a>
           <a className="cv-button" href={cvPath} target="_blank" rel="noreferrer" data-testid="link-cv-mobile">
@@ -366,10 +394,13 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <nav className="footer-nav">
+          <nav className="footer-nav" aria-label="Footer navigation">
             <a href="/">Portfolio</a>
-            <a href="/blog">Blog</a>
             <a href="/about">About</a>
+            <a href="/experience">Experience</a>
+            <a href="/projects">Projects</a>
+            <a href="/skills">Skills</a>
+            <a href="/blog">Blog</a>
             <a href="/contact">Contact</a>
             <a href="/privacy-policy">Privacy</a>
             <a href="/terms">Terms</a>

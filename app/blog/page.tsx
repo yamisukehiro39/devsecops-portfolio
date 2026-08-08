@@ -3,8 +3,9 @@ import { BlogPage } from '../../components/PortfolioClient';
 import { getBlogCategories, getPublishedPosts } from '../../lib/blog-db';
 
 export const metadata: Metadata = {
-  title: 'Technical Blog',
-  description: 'Field notes about cloud security, DevOps, Kubernetes, networks and observability.',
+  title: 'DevSecOps & Cybersecurity Blog',
+  description:
+    'Technical field notes about DevSecOps, cybersecurity, cloud security, Kubernetes, networking, infrastructure and observability.',
   alternates: { canonical: '/blog' },
 };
 

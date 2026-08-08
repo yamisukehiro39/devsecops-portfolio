@@ -12,9 +12,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: number;
   }> = [
     { path: '/', changeFrequency: 'monthly', priority: 1 },
+    { path: '/about', changeFrequency: 'monthly', priority: 0.9 },
+    { path: '/projects', changeFrequency: 'monthly', priority: 0.9 },
+    { path: '/experience', changeFrequency: 'monthly', priority: 0.8 },
+    { path: '/skills', changeFrequency: 'monthly', priority: 0.8 },
     { path: '/blog', changeFrequency: 'weekly', priority: 0.9 },
-    { path: '/about', changeFrequency: 'monthly', priority: 0.7 },
-    { path: '/contact', changeFrequency: 'monthly', priority: 0.6 },
+    { path: '/contact', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/privacy-policy', changeFrequency: 'yearly', priority: 0.3 },
     { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
   ];
@@ -34,8 +37,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: page.priority,
     })),
     ...databasePosts.map((post) => ({
-      // Always use the canonical production origin. Old database rows may still
-      // contain localhost or the non-www domain in canonical_url.
       url: `${siteUrl}/blog/${post.slug}`,
       lastModified: post.updatedAt,
       changeFrequency: 'monthly' as const,

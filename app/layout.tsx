@@ -9,24 +9,25 @@ const validAdsenseClient = adsenseClient && /^ca-pub-\d+$/.test(adsenseClient) ?
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Othman El-Mansour | Cloud Security & DevOps',
+    default: 'Othman El-Mansour | DevSecOps & Cloud Security',
     template: '%s | Othman El-Mansour',
   },
   description:
-    'Portfolio and technical field notes by Othman El-Mansour about cloud security, DevOps, Kubernetes, networking and observability.',
-  applicationName: 'Othman El-Mansour Portfolio',
+    'Portfolio of Othman El-Mansour focused on DevSecOps, cloud security, cybersecurity, Kubernetes, networking and secure infrastructure.',
+  applicationName: 'Othman El-Mansour',
   authors: [{ name: 'Othman El-Mansour', url: siteUrl }],
   creator: 'Othman El-Mansour',
   publisher: 'Othman El-Mansour',
   alternates: { canonical: '/' },
   keywords: [
-    'Cloud Security',
-    'DevOps',
+    'Othman El-Mansour',
     'DevSecOps',
+    'Cloud Security',
+    'Cybersecurity',
+    'DevOps',
     'Kubernetes',
     'Networking',
     'Observability',
-    'Cybersecurity',
   ],
   robots: {
     index: true,
@@ -43,14 +44,16 @@ export const metadata: Metadata = {
     type: 'website',
     url: siteUrl,
     siteName: 'Othman El-Mansour',
-    title: 'Othman El-Mansour | Cloud Security & DevOps',
-    description: 'Portfolio and technical field notes on secure, observable infrastructure.',
+    title: 'Othman El-Mansour | DevSecOps & Cloud Security',
+    description:
+      'Portfolio and technical field notes about DevSecOps, cloud security, cybersecurity, Kubernetes and networking.',
     images: [{ url: '/othman-profile.png', width: 1024, height: 1024, alt: 'Othman El-Mansour' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Othman El-Mansour | Cloud Security & DevOps',
-    description: 'Portfolio and technical field notes on secure, observable infrastructure.',
+    title: 'Othman El-Mansour | DevSecOps & Cloud Security',
+    description:
+      'Portfolio and technical field notes about DevSecOps, cloud security, cybersecurity, Kubernetes and networking.',
     images: ['/othman-profile.png'],
   },
   icons: { icon: '/favicon.svg' },
@@ -63,19 +66,29 @@ export const viewport: Viewport = {
   themeColor: '#0c1016',
 };
 
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${siteUrl}/#person`,
+  name: 'Othman El-Mansour',
+  url: siteUrl,
+  image: `${siteUrl}/othman-profile.png`,
+  jobTitle: 'Network & Telecommunications Systems Engineering Student',
+  sameAs: [
+    'https://github.com/yamisukehiro39',
+    'https://linkedin.com/in/el-mansour-othman',
+  ],
+};
+
 const websiteJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': `${siteUrl}/#website`,
   name: 'Othman El-Mansour',
+  alternateName: '0thman.tech',
   url: siteUrl,
-  author: {
-    '@type': 'Person',
-    name: 'Othman El-Mansour',
-    url: siteUrl,
-    sameAs: [
-      'https://github.com/yamisukehiro39',
-      'https://linkedin.com/in/el-mansour-othman',
-    ],
+  publisher: {
+    '@id': `${siteUrl}/#person`,
   },
 };
 
@@ -86,6 +99,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd).replace(/</g, '\\u003c') }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd).replace(/</g, '\\u003c') }}
         />
         {children}
         {validAdsenseClient ? (
