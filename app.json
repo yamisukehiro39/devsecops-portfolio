@@ -1,0 +1,44 @@
+{
+  "name": "Othman El-Mansour Portfolio",
+  "description": "Next.js portfolio and PostgreSQL-backed technical blog.",
+  "repository": "",
+  "keywords": ["nextjs", "postgresql", "portfolio", "blog"],
+  "env": {
+    "NEXT_PUBLIC_SITE_URL": {
+      "description": "Canonical public origin used by metadata, sitemap and structured data.",
+      "value": "https://www.0thman.tech"
+    },
+    "DATABASE_URL": {
+      "description": "PostgreSQL connection string.",
+      "required": true
+    },
+    "DATABASE_SSL": {
+      "description": "Enable SSL for a managed PostgreSQL database.",
+      "value": "true"
+    },
+    "DATABASE_SSL_REJECT_UNAUTHORIZED": {
+      "description": "Managed PostgreSQL compatibility setting.",
+      "value": "false"
+    },
+    "DATABASE_POOL_MAX": {
+      "description": "Maximum PostgreSQL pool size.",
+      "value": "10"
+    },
+    "JWT_SECRET": {
+      "description": "Long random secret used to sign admin sessions.",
+      "generator": "secret"
+    },
+    "JWT_EXPIRES_IN_SECONDS": {
+      "description": "Admin session duration.",
+      "value": "86400"
+    },
+    "JWT_ISSUER": {
+      "description": "JWT issuer.",
+      "value": "0thman.tech"
+    },
+    "JWT_AUDIENCE": {
+      "description": "JWT audience.",
+      "value": "portfolio-admin"
+    }
+  }
+}
