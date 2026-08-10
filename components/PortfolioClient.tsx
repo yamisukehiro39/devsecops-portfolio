@@ -282,10 +282,10 @@ function scrollToSection(id: string, closeMenu?: () => void) {
   closeMenu?.();
 }
 
-export function SiteHeader({ isBlog = false }: { isBlog?: boolean }) {
+export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const isSubpage = isBlog || pathname !== '/';
+  const isHomePage = pathname === '/';
   const isBlogPath = pathname === '/blog' || pathname.startsWith('/blog/');
   const sectionLinks = [
     { id: 'about', label: 'Profile', href: '/about' },
@@ -296,16 +296,16 @@ export function SiteHeader({ isBlog = false }: { isBlog?: boolean }) {
   ];
 
   function goHome() {
-    if (isSubpage) {
+    if (!isHomePage) {
       window.location.assign('/');
       return;
     }
     scrollToSection('top');
   }
 
-  function goToSection(id: string, href: string) {
-    if (isSubpage) {
-      window.location.assign(href);
+  function goToSection(id: string) {
+    if (!isHomePage) {
+      window.location.assign(`/#${id}`);
       return;
     }
     scrollToSection(id, () => setMenuOpen(false));
@@ -323,12 +323,12 @@ export function SiteHeader({ isBlog = false }: { isBlog?: boolean }) {
             <a
               key={id}
               className={`nav-link ${pathname === href ? 'current' : ''}`}
-              href={isSubpage ? href : `/#${id}`}
+              href={`/#${id}`}
               aria-current={pathname === href ? 'page' : undefined}
               onClick={(event) => {
-                if (!isSubpage) {
+                if (isHomePage) {
                   event.preventDefault();
-                  goToSection(id, href);
+                  goToSection(id);
                 }
               }}
               data-testid={`link-${id}`}
@@ -353,12 +353,12 @@ export function SiteHeader({ isBlog = false }: { isBlog?: boolean }) {
             <a
               key={id}
               className={`nav-link ${pathname === href ? 'current' : ''}`}
-              href={isSubpage ? href : `/#${id}`}
+              href={`/#${id}`}
               aria-current={pathname === href ? 'page' : undefined}
               onClick={(event) => {
-                if (!isSubpage) {
+                if (isHomePage) {
                   event.preventDefault();
-                  goToSection(id, href);
+                  goToSection(id);
                 }
               }}
               data-testid={`mobile-link-${id}`}
@@ -491,7 +491,7 @@ export function BlogPage({ publications, categories: databaseCategories }: { pub
 
   return (
     <div className="portfolio-shell blog-shell">
-      <SiteHeader isBlog />
+      <SiteHeader />
       <main className="site-content blog-content">
         <section className="blog-hero section-wrap">
           <div className="blog-hero-grid">
@@ -1374,7 +1374,7 @@ export function ArticlePage({ publication }: { publication: BlogPublication }) {
 
   return (
     <div className="portfolio-shell blog-shell">
-      <SiteHeader isBlog />
+      <SiteHeader />
       <main className="site-content article-content">
         <article className="section-wrap article-page">
           <a className="text-link article-back" href="/blog"><ArrowDown className="article-back-icon" size={14} /> Back to field notes</a>
@@ -1551,4 +1551,3 @@ export function PortfolioHome() {
     </div>
   );
 }
-

@@ -11,7 +11,7 @@ type Props = {
 export function StaticContentPage({ eyebrow, title, intro, children }: Props) {
   return (
     <div className="portfolio-shell legal-shell">
-      <SiteHeader isBlog />
+      <SiteHeader />
       <main className="site-content">
         <article className="section-wrap legal-page">
           <span className="eyebrow">{eyebrow}</span>

@@ -3,7 +3,10 @@ import Script from 'next/script';
 import { siteUrl } from '../lib/site';
 import './globals.css';
 
-const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim();
+// const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim();
+
+const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+
 const validAdsenseClient = adsenseClient && /^ca-pub-\d+$/.test(adsenseClient) ? adsenseClient : undefined;
 
 export const metadata: Metadata = {

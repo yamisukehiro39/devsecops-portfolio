@@ -13,10 +13,21 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export default async function Page() {
-  const [publications, categories] = await Promise.all([
+  const [publicationsResult, categoriesResult] = await Promise.allSettled([
     getPublishedPosts(),
     getBlogCategories(),
   ]);
+
+  if (publicationsResult.status === 'rejected') {
+    console.error('Blog publications query failed:', publicationsResult.reason);
+  }
+
+  if (categoriesResult.status === 'rejected') {
+    console.error('Blog categories query failed:', categoriesResult.reason);
+  }
+
+  const publications = publicationsResult.status === 'fulfilled' ? publicationsResult.value : [];
+  const categories = categoriesResult.status === 'fulfilled' ? categoriesResult.value : [];
 
   return <BlogPage publications={publications} categories={categories} />;
 }
