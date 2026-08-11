@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!post) {
     return {
-      title: 'Field Note',
+      title: 'Blog Article',
       robots: { index: false, follow: false },
     };
   }

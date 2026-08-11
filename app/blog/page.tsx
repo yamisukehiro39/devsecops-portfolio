@@ -5,7 +5,7 @@ import { getBlogCategories, getPublishedPosts } from '../../lib/blog-db';
 export const metadata: Metadata = {
   title: 'DevSecOps & Cybersecurity Blog',
   description:
-    'Technical field notes about DevSecOps, cybersecurity, cloud security, Kubernetes, networking, infrastructure and observability.',
+    'Simple articles about DevSecOps, cybersecurity, cloud, Kubernetes, networks and monitoring.',
   alternates: { canonical: '/blog' },
 };
 

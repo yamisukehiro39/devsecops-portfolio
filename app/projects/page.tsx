@@ -11,25 +11,25 @@ export const metadata: Metadata = {
 export default function ProjectsPage() {
   return (
     <StaticContentPage
-      eyebrow="PROJECTS / PROOF OF PRACTICE"
-      title="DevSecOps & security projects."
-      intro="Selected projects focused on monitoring, network security, infrastructure visibility and practical engineering."
+      eyebrow="PROJECTS / MY WORK"
+      title="My projects."
+      intro="Here are some projects I built to improve monitoring and security."
     >
       <h2>GeoMonitor</h2>
       <p>
-        A geographic latency and uptime monitoring module built around Uptime Kuma. The project adds regional context to service health so availability can be understood by location instead of only as a global status.
+        A tool for Uptime Kuma that checks website uptime and response time from different locations.
       </p>
-      <p><strong>Focus:</strong> Uptime Kuma, monitoring, latency, geographic regions and service visibility.</p>
+      <p><strong>Tools:</strong> Uptime Kuma, monitoring and latency tracking.</p>
 
       <h2>Network Security Monitoring Stack</h2>
       <p>
-        A monitoring setup combining Snort, Zabbix and Uptime Kuma to improve infrastructure visibility, security alerting and correlation between availability and suspicious activity.
+        A system that uses Snort, Zabbix and Uptime Kuma to monitor servers and send alerts when a problem appears.
       </p>
-      <p><strong>Focus:</strong> Snort, Zabbix, IDS, alerting, dashboards and observability.</p>
+      <p><strong>Tools:</strong> Snort, Zabbix, Uptime Kuma, alerts and dashboards.</p>
 
-      <h2>Engineering approach</h2>
+      <h2>My goal</h2>
       <p>
-        The projects on this portfolio are built to solve operational problems: reduce blind spots, make system behavior easier to understand and turn security signals into useful context.
+        I build practical tools that make systems easier to understand, monitor and protect.
       </p>
     </StaticContentPage>
   );

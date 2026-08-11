@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
+import { AnalyticsTracker } from '../components/AnalyticsTracker';
 import { siteUrl } from '../lib/site';
 import './globals.css';
 
@@ -49,14 +50,14 @@ export const metadata: Metadata = {
     siteName: 'Othman El-Mansour',
     title: 'Othman El-Mansour | DevSecOps & Cloud Security',
     description:
-      'Portfolio and technical field notes about DevSecOps, cloud security, cybersecurity, Kubernetes and networking.',
+      'Portfolio and simple articles about DevSecOps, cloud security, cybersecurity, Kubernetes and networking.',
     images: [{ url: '/othman-profile.png', width: 1024, height: 1024, alt: 'Othman El-Mansour' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Othman El-Mansour | DevSecOps & Cloud Security',
     description:
-      'Portfolio and technical field notes about DevSecOps, cloud security, cybersecurity, Kubernetes and networking.',
+      'Portfolio and simple articles about DevSecOps, cloud security, cybersecurity, Kubernetes and networking.',
     images: ['/othman-profile.png'],
   },
   icons: { icon: '/favicon.svg' },
@@ -99,6 +100,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
+        <AnalyticsTracker />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd).replace(/</g, '\\u003c') }}

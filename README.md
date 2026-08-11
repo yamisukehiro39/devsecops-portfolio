@@ -12,6 +12,7 @@ This version keeps the existing visual design while moving the blog and admin pu
 - Tags are stored in `tags` + `blog_post_tags`.
 - The category selector reads directly from the `categories` table.
 - Browser `localStorage` is no longer used for blog publications.
+- The admin panel shows recent visitor IP addresses and publication view counts after the analytics migration is run.
 
 ## Confirmation dialogs
 
@@ -50,6 +51,14 @@ ON blog_posts(status, noindex, published_at DESC);
 The rest of the application expects the previously created tables:
 
 `admins`, `admin_sessions`, `categories`, `blog_posts`, `blog_images`, `tags`, `blog_post_tags`.
+
+To enable visitor and publication analytics, run the following file once:
+
+```sql
+-- database/analytics.sql
+```
+
+It creates `site_visitors` and `publication_views`. Visitor IP addresses and browser information are personal data, so access is restricted to the authenticated admin panel and disclosed in the privacy policy.
 
 ## Environment
 

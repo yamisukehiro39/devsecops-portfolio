@@ -19,6 +19,7 @@ export type BlogPublication = {
   noindex?: boolean;
   status?: 'draft' | 'published' | 'archived';
   updatedAt?: string;
+  views?: number;
 };
 
 export type BlogCategory = {

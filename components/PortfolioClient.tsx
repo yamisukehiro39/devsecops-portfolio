@@ -3,6 +3,7 @@
 import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { usePathname } from 'next/navigation';
 import type { BlogCategory, BlogPublication } from '../lib/blog-data';
+import type { AdminAnalytics } from '../lib/analytics-db';
 
 import {
   ArrowDown,
@@ -52,14 +53,14 @@ const experience = [
     date: '06.2025 — 08.2025',
     role: 'Network Security & Monitoring Intern',
     company: 'SkyVaults · Agadir, Morocco',
-    badge: 'Security / Observability',
+    badge: 'Security / Monitoring',
     summary:
-      'Built the visibility layer for secure infrastructure: monitoring, intrusion detection, and geographic service intelligence in one operational loop.',
+      'Monitored servers and networks to find availability and security problems.',
     details: [
-      'Deployed and configured Uptime Kuma, Zabbix, and Snort for real-time visibility and availability tracking.',
-      'Designed a custom GeoMonitor module for Uptime Kuma to track service latency and uptime by country.',
-      'Integrated Snort IDS with monitoring dashboards for faster correlation of suspicious activity.',
-      'Strengthened security monitoring through proactive alerting and dashboard customization.',
+      'Set up Uptime Kuma, Zabbix and Snort.',
+      'Built GeoMonitor to check uptime and response time by country.',
+      'Connected Snort alerts to monitoring dashboards.',
+      'Improved alerts and dashboards for easier monitoring.',
     ],
   },
   {
@@ -68,8 +69,8 @@ const experience = [
     company: 'BigBang Center · Beni Mellal, Morocco',
     badge: 'Product / CRUD',
     summary:
-      'Delivered a full-featured inventory management web app with an intuitive interface and complete CRUD functionality.',
-    details: ['Worked across HTML5, CSS3, JavaScript, Python, and a relational database backend.'],
+      'Built an inventory web app where users can add, view, edit and delete products.',
+    details: ['Used HTML, CSS, JavaScript, Python and a relational database.'],
   },
   {
     date: '06.2023 — 08.2023',
@@ -77,8 +78,8 @@ const experience = [
     company: 'BigBang Center · Beni Mellal, Morocco',
     badge: 'Web / Django',
     summary:
-      'Developed a responsive e-commerce platform for artisanal clothing, from product catalog to cart and checkout flow.',
-    details: ['Built with HTML5, CSS3, JavaScript, Python, and Django.'],
+      'Built an online store for handmade clothing, with products, a cart and checkout.',
+    details: ['Used HTML, CSS, JavaScript, Python and Django.'],
   },
 ];
 
@@ -87,7 +88,7 @@ const projects = [
     number: '01 / 02',
     title: 'GeoMonitor',
     description:
-      'A global latency and uptime tracking module that extends Uptime Kuma with geographic context. Service health becomes a map, not just a timestamp.',
+      'A Uptime Kuma module that checks website uptime and response time from different locations.',
     tags: ['Uptime Kuma', 'Monitoring', 'Latency', 'Geographic regions'],
     main: true,
   },
@@ -95,7 +96,7 @@ const projects = [
     number: '02 / 02',
     title: 'Network Security Monitoring Stack',
     description:
-      'A unified monitoring setup combining Snort, Zabbix, and Uptime Kuma for visibility, alerting, and faster security correlation.',
+      'A system that uses Snort, Zabbix and Uptime Kuma to monitor servers and send alerts.',
     tags: ['Snort', 'Zabbix', 'IDS', 'Alerting'],
   },
 ];
@@ -104,43 +105,43 @@ const skillGroups = [
   {
     label: 'Security',
     icon: ShieldCheck,
-    note: 'Security is treated as a signal problem: collect context, reduce noise, respond with intent.',
+    note: 'I use security tools to find risks and protect systems.',
     skills: ['IDS/IPS', 'Snort', 'Security Monitoring', 'Firewalls', 'Cryptography & Steganography', 'Risk Assessment', 'Incident Response', 'System & Network Hardening'],
   },
   {
     label: 'Networking',
     icon: Network,
-    note: 'Routing, switching, and the protocols underneath are where dependable infrastructure starts.',
+    note: 'I understand how devices and networks communicate.',
     skills: ['Cisco Routing & Switching', 'VLAN', 'TCP/IP', 'DNS', 'DHCP', 'SSH', 'GNS3', 'Packet Tracer'],
   },
   {
     label: 'Cloud & Containers',
     icon: Cloud,
-    note: 'Building familiarity with modern deployment primitives and the systems around them.',
+    note: 'I use containers to run and manage applications.',
     skills: ['Docker', 'Kubernetes'],
   },
   {
     label: 'DevOps & Automation',
     icon: Terminal,
-    note: 'Repeatable delivery, sensible automation, and CI/CD workflows that keep secure changes moving.',
+    note: 'I automate tasks and use CI/CD to deliver changes safely.',
     skills: ['Git', 'GitHub', 'GitHub Actions (CI/CD)', 'Automation', 'Bash Scripting'],
   },
   {
-    label: 'Observability',
+    label: 'Monitoring',
     icon: Radar,
-    note: 'Make infrastructure legible through dashboards, alerting, and service health signals.',
-    skills: ['Zabbix', 'Uptime Kuma', 'Snort', 'Infrastructure Visibility', 'Alerting & Dashboards'],
+    note: 'I use dashboards and alerts to understand system health.',
+    skills: ['Zabbix', 'Uptime Kuma', 'Snort', 'Server Monitoring', 'Alerts & Dashboards'],
   },
   {
     label: 'Programming',
     icon: Code2,
-    note: 'A pragmatic software foundation for building tools, APIs, and useful interfaces.',
+    note: 'I use programming to build tools, websites and APIs.',
     skills: ['Python', 'C', 'C++', 'Java', 'JavaScript', 'Node.js', 'HTML5', 'CSS3', 'Django', 'REST APIs'],
   },
   {
     label: 'Systems & Data',
     icon: Server,
-    note: 'Comfortable moving between operating systems, databases, and the protocols that connect them.',
+    note: 'I work with operating systems, databases and communication tools.',
     skills: ['Linux (Advanced Administration)', 'Windows', 'SQL', 'Relational Database Design', 'SIP', 'WebRTC', 'VoIP', 'Asterisk', 'jsSIP'],
   },
 ];
@@ -248,7 +249,7 @@ function createBlogImage(title: string, category: string) {
       <rect x="40" y="42" width="240" height="34" rx="17" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.16)"/>
       <text x="58" y="64" fill="#dbeafe" font-size="16" font-family="Arial, Helvetica, sans-serif" font-weight="700" letter-spacing="1.8">${safeCategory}</text>
       ${titleMarkup}
-      <text x="40" y="590" fill="rgba(248,250,252,0.76)" font-size="22" font-family="Arial, Helvetica, sans-serif">Othman El-Mansour · Field Notes</text>
+      <text x="40" y="590" fill="rgba(248,250,252,0.76)" font-size="22" font-family="Arial, Helvetica, sans-serif">Othman El-Mansour · Blog</text>
       <path d="M40 528 H420" stroke="${accent}" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
       <rect x="40" y="508" width="1120" height="1" fill="rgba(255,255,255,0.09)"/>
     </svg>
@@ -291,7 +292,7 @@ export function SiteHeader() {
     { id: 'about', label: 'Profile', href: '/about' },
     { id: 'experience', label: 'Experience', href: '/experience' },
     { id: 'projects', label: 'Projects', href: '/projects' },
-    { id: 'skills', label: 'Stack', href: '/skills' },
+    { id: 'skills', label: 'Skills', href: '/skills' },
     { id: 'contact', label: 'Contact', href: '/contact' },
   ];
 
@@ -370,7 +371,7 @@ export function SiteHeader() {
             Blog
           </a>
           <a className="cv-button" href={cvPath} target="_blank" rel="noreferrer" data-testid="link-cv-mobile">
-            <Download size={13} /> View original CV
+            <Download size={13} /> View CV
           </a>
         </nav>
       )}
@@ -496,18 +497,18 @@ export function BlogPage({ publications, categories: databaseCategories }: { pub
         <section className="blog-hero section-wrap">
           <div className="blog-hero-grid">
             <div>
-              <div className="hero-kicker reveal"><span className="pulse-dot" /><span className="eyebrow">PUBLICATIONS / FIELD NOTES</span></div>
-              <h1 className="blog-title reveal delay-1">Notes from<br /><span>the edge.</span></h1>
+              <div className="hero-kicker reveal"><span className="pulse-dot" /><span className="eyebrow">BLOG / ARTICLES</span></div>
+              <h1 className="blog-title reveal delay-1">Simple technical<br /><span>articles.</span></h1>
               <p className="blog-intro reveal delay-2">
-                Short dispatches on cloud security, observable infrastructure, and the work between a change request and a system you can trust.
+                Clear notes about cloud, security, networks, monitoring and DevOps.
               </p>
             </div>
             <aside className="blog-index reveal delay-2" aria-label="Publication index">
-              <div className="blog-index-top"><BookOpen size={16} /><span>INDEX / OE-LOG</span></div>
-              <div className="blog-index-row"><span>DISPATCHES</span><strong>{String(allPublications.length).padStart(2, '0')}</strong></div>
-              <div className="blog-index-row"><span>ACTIVE THREAD</span><strong>{activeCategory.toUpperCase()}</strong></div>
+              <div className="blog-index-top"><BookOpen size={16} /><span>BLOG INDEX</span></div>
+              <div className="blog-index-row"><span>ARTICLES</span><strong>{String(allPublications.length).padStart(2, '0')}</strong></div>
+              <div className="blog-index-row"><span>CATEGORY</span><strong>{activeCategory.toUpperCase()}</strong></div>
               <div className="blog-index-row"><span>SEARCH</span><strong>{normalizedSearch ? 'FILTERED' : 'OPEN'}</strong></div>
-              <div className="blog-index-foot"><span className="pulse-dot" /> archive is live</div>
+              <div className="blog-index-foot"><span className="pulse-dot" /> blog is online</div>
             </aside>
           </div>
         </section>
@@ -515,15 +516,15 @@ export function BlogPage({ publications, categories: databaseCategories }: { pub
         <section className="section-wrap publications-section" aria-labelledby="publication-list-title">
           <div className="publication-toolbar">
             <div>
-              <span className="eyebrow">READ / FILTER</span>
-              <h2 id="publication-list-title" className="publication-heading">Selected <em>signals.</em></h2>
+              <span className="eyebrow">FIND AN ARTICLE</span>
+              <h2 id="publication-list-title" className="publication-heading">Latest <em>articles.</em></h2>
             </div>
 
             <div className="blog-tools" role="search" aria-label="Filter publications">
               <div className="blog-tool-group">
                 <label htmlFor="publication-search" className="blog-tool-label">
                   <Search size={13} aria-hidden="true" />
-                  Search archive
+                  Search articles
                 </label>
                 <div className="blog-search">
                   <Search size={17} aria-hidden="true" />
@@ -535,14 +536,14 @@ export function BlogPage({ publications, categories: databaseCategories }: { pub
                       setSearchQuery(event.target.value);
                       setCurrentPage(1);
                     }}
-                    placeholder="Title, tag, topic…"
+                    placeholder="Title, tag or topic…"
                     autoComplete="off"
                   />
                   {searchQuery && (
                     <button
                       type="button"
                       className="blog-search-clear"
-                      aria-label="Clear publication search"
+                    aria-label="Clear article search"
                       onClick={() => {
                         setSearchQuery('');
                         setCurrentPage(1);
@@ -591,7 +592,7 @@ export function BlogPage({ publications, categories: databaseCategories }: { pub
               <div className="publication-list">
                 {page === 1 && featuredPublication && (
                   <a className="featured-publication" href={featuredPublication.href ?? '#'} data-testid="card-publication-featured">
-                    <div className="publication-card-top"><span className="publication-flag">FEATURED / 001</span><ArrowUpRight size={18} /></div>
+                    <div className="publication-card-top"><span className="publication-flag">FEATURED ARTICLE</span><ArrowUpRight size={18} /></div>
                     <div className="publication-media featured-media">
                       <img src={featuredPublication.image} alt={featuredPublication.imageAlt || featuredPublication.title} loading="lazy" />
                     </div>
@@ -609,7 +610,7 @@ export function BlogPage({ publications, categories: databaseCategories }: { pub
                 )}
                 {paginatedRegulars.map((publication, index) => (
                   <a className="publication-card" href={publication.href ?? '#'} key={`${publication.title}-${publication.date}`} data-testid={`card-publication-${index}`}>
-                    <div className="publication-card-top"><span className="publication-flag">FIELD NOTE / {String(((page - 1) * 6) + index + 1).padStart(3, '0')}</span><ArrowUpRight size={16} /></div>
+                    <div className="publication-card-top"><span className="publication-flag">ARTICLE / {String(((page - 1) * 6) + index + 1).padStart(3, '0')}</span><ArrowUpRight size={16} /></div>
                     <div className="publication-media">
                       <img src={publication.image} alt={publication.imageAlt || publication.title} loading="lazy" />
                     </div>
@@ -650,18 +651,18 @@ export function BlogPage({ publications, categories: databaseCategories }: { pub
             </>
           ) : (
             <div className="publication-empty" data-testid="empty-publications">
-              <span className="empty-code">ERR / 204</span>
-              <h3>No signals matched your search.</h3>
-              <p>Try another keyword, remove the category filter, or return to the full archive.</p>
-              <button className="outline-button" onClick={() => { setActiveCategory('All'); setSearchQuery(''); setCurrentPage(1); }} data-testid="button-reset-filter">View all publications <ArrowUpRight size={14} /></button>
+              <span className="empty-code">NO RESULTS</span>
+              <h3>No article matched your search.</h3>
+              <p>Try another word or choose another category.</p>
+              <button className="outline-button" onClick={() => { setActiveCategory('All'); setSearchQuery(''); setCurrentPage(1); }} data-testid="button-reset-filter">View all articles <ArrowUpRight size={14} /></button>
             </div>
           )}
         </section>
 
         <section className="blog-close section-wrap">
-          <span className="eyebrow">END OF TRANSMISSION</span>
-          <p>More notes are forming at the boundary between secure systems and useful systems.</p>
-          <button className="text-link" onClick={() => window.location.assign('/')} data-testid="button-blog-home">Return to portfolio home <ArrowUpRight size={14} /></button>
+          <span className="eyebrow">MORE TO COME</span>
+          <p>I regularly add new articles about technology and security.</p>
+          <button className="text-link" onClick={() => window.location.assign('/')} data-testid="button-blog-home">Back to portfolio <ArrowUpRight size={14} /></button>
         </section>
       </main>
       <SiteFooter />
@@ -724,7 +725,7 @@ export function LoginPage() {
             <a className="nav-link" href="/blog">Blog</a>
             <span className="nav-link current">Admin access</span>
           </nav>
-          <a className="cv-button" href="/blog"><BookOpen size={13} /> Field notes</a>
+          <a className="cv-button" href="/blog"><BookOpen size={13} /> Blog</a>
         </div>
       </header>
 
@@ -733,7 +734,7 @@ export function LoginPage() {
           <div className="login-copy">
             <div className="hero-kicker reveal"><span className="pulse-dot" /><span className="eyebrow">ADMIN / AUTHENTICATION</span></div>
             <h1 className="login-title reveal delay-1">Secure<br /><span>access.</span></h1>
-            <p className="login-intro reveal delay-2">Restricted entry to the blog publishing control plane. Authenticate to create, edit, draft, and publish field notes.</p>
+            <p className="login-intro reveal delay-2">Sign in to create, edit and publish blog articles.</p>
             <div className="login-signal reveal delay-3">
               <div><span>CHANNEL</span><strong>BLOG / ADMIN</strong></div>
               <div><span>SESSION</span><strong>JWT / HTTPONLY</strong></div>
@@ -893,14 +894,15 @@ function ConfirmationDialog({
   );
 }
 
-export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPublication[]; categories: BlogCategory[] }) {
+export function AdminPage({ initialPosts, categories, analytics }: { initialPosts: BlogPublication[]; categories: BlogCategory[]; analytics: AdminAnalytics }) {
   const defaultCategory = categories.find((category) => category.name === 'Cloud Security')?.name ?? categories[0]?.name ?? 'Cloud Security';
   const [posts, setPosts] = useState<BlogPublication[]>(initialPosts);
   const [editor, setEditor] = useState<EditorState>(() => ({ ...emptyEditor, category: defaultCategory }));
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [notice, setNotice] = useState('Connected to PostgreSQL. Ready for a new field note.');
+  const [notice, setNotice] = useState('Connected to PostgreSQL. Ready for a new article.');
   const [confirmation, setConfirmation] = useState<ConfirmationRequest | null>(null);
   const [confirmBusy, setConfirmBusy] = useState(false);
+  const [activeAdminSection, setActiveAdminSection] = useState<'editor' | 'publications' | 'analytics'>('editor');
 
   const publishedCount = posts.filter((post) => post.status === 'published').length;
   const draftCount = posts.filter((post) => post.status === 'draft').length;
@@ -918,6 +920,17 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
     { label: 'Indexing enabled', ok: !editor.noindex },
   ];
   const seoScore = seoChecks.filter((check) => check.ok).length;
+  const publicationViews = new Map(analytics.publicationViews.map((publication) => [publication.id, publication.views]));
+
+  function formatAnalyticsDate(value: string) {
+    return new Intl.DateTimeFormat('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(value));
+  }
 
   function updateEditor<K extends keyof EditorState>(key: K, value: EditorState[K]) {
     setEditor((current) => ({ ...current, [key]: value }));
@@ -946,6 +959,7 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
     setEditor({ ...emptyEditor, category: defaultCategory });
     setEditingId(null);
     setNotice('New publication buffer opened.');
+    setActiveAdminSection('editor');
   }
 
   function requestConfirmation(request: ConfirmationRequest) {
@@ -967,7 +981,7 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
     requestConfirmation({
       title: 'Open a new publication?',
       message: 'The editor will be cleared. Any unsaved changes currently in the form will be lost.',
-      confirmLabel: 'New field note',
+      confirmLabel: 'New article',
       action: resetEditor,
     });
   }
@@ -1069,7 +1083,7 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
       message: status === 'published'
         ? 'This will write the publication to PostgreSQL and make it visible on the public blog immediately.'
         : 'This will write the current editor content to PostgreSQL as a private draft.',
-      confirmLabel: status === 'published' ? 'Publish signal' : 'Save draft',
+      confirmLabel: status === 'published' ? 'Publish article' : 'Save draft',
       action: () => save(status),
     });
   }
@@ -1078,6 +1092,7 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
     setEditingId(post.id ?? null);
     setEditor(editorFromPost(post));
     setNotice(`Editing database publication: ${post.title}`);
+    setActiveAdminSection('editor');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1147,10 +1162,10 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
           <div>
             <div className="hero-kicker reveal"><span className="pulse-dot" /><span className="eyebrow">PUBLISHING / CONTROL PLANE</span></div>
             <h1 className="admin-title reveal delay-1">Editorial<br /><span>control.</span></h1>
-            <p className="admin-intro reveal delay-2">Write, preview, save, and publish field notes directly through the PostgreSQL publication store.</p>
+            <p className="admin-intro reveal delay-2">Write, preview, save and publish blog articles.</p>
           </div>
           <div className="admin-status-grid reveal delay-2">
-            <div className="admin-stat"><span>LIVE SIGNALS</span><strong>{String(publishedCount).padStart(2, '0')}</strong></div>
+            <div className="admin-stat"><span>PUBLISHED</span><strong>{String(publishedCount).padStart(2, '0')}</strong></div>
             <div className="admin-stat"><span>DRAFT BUFFER</span><strong>{String(draftCount).padStart(2, '0')}</strong></div>
             <div className="admin-stat"><span>EDITOR STATE</span><strong>{editingId ? 'EDIT' : 'NEW'}</strong></div>
           </div>
@@ -1159,8 +1174,10 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
         <section className="section-wrap admin-console">
           <aside className="admin-rail">
             <div className="admin-rail-label"><LayoutDashboard size={15} /> CONSOLE / 01</div>
-            <button className="admin-rail-action active" onClick={requestNewPost}><FilePlus2 size={15} /> New field note</button>
-            <a className="admin-rail-action" href="/blog"><Eye size={15} /> Public archive</a>
+            <button className={`admin-rail-action ${activeAdminSection === 'editor' ? 'active' : ''}`} onClick={requestNewPost}><FilePlus2 size={15} /> New article</button>
+            <button className={`admin-rail-action ${activeAdminSection === 'publications' ? 'active' : ''}`} onClick={() => setActiveAdminSection('publications')}><BookOpen size={15} /> Publications</button>
+            <button className={`admin-rail-action ${activeAdminSection === 'analytics' ? 'active' : ''}`} onClick={() => setActiveAdminSection('analytics')}><Radar size={15} /> Analytics</button>
+            <a className="admin-rail-action" href="/blog"><Eye size={15} /> View blog</a>
             <div className="admin-rail-divider" />
             <span className="admin-rail-caption">DATABASE PUBLICATIONS</span>
             <div className="admin-post-mini-list">
@@ -1175,9 +1192,10 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
             </div>
           </aside>
 
+          {activeAdminSection === 'editor' && (
           <div className="admin-main-panel">
             <div className="admin-panel-head">
-              <div><span className="eyebrow">COMPOSE / FIELD NOTE</span><h2>{editingId ? 'Edit transmission.' : 'New transmission.'}</h2></div>
+              <div><span className="eyebrow">BLOG EDITOR</span><h2>{editingId ? 'Edit article.' : 'New article.'}</h2></div>
               <span className="admin-notice"><span className="pulse-dot" /> {notice}</span>
             </div>
 
@@ -1292,25 +1310,25 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
                 <label className="admin-feature-check">
                   <input type="checkbox" checked={editor.featured} onChange={(event) => updateEditor('featured', event.target.checked)} />
                   <span className="admin-check-box" />
-                  <span><strong>FEATURED SIGNAL</strong><small>Use the large lead card in the public archive.</small></span>
+                  <span><strong>FEATURED ARTICLE</strong><small>Show this article in the large card on the blog.</small></span>
                 </label>
 
                 <div className="admin-actions">
                   <button type="button" className="outline-button admin-save" onClick={() => requestSave('draft')}><Save size={14} /> Save draft</button>
-                  <button type="button" className="cv-button admin-publish" onClick={() => requestSave('published')}><Send size={14} /> Publish signal</button>
+                  <button type="button" className="cv-button admin-publish" onClick={() => requestSave('published')}><Send size={14} /> Publish article</button>
                 </div>
               </form>
 
               <aside className="admin-preview">
                 <div className="admin-preview-top"><span>LIVE PREVIEW / CARD</span><Eye size={15} /></div>
                 <div className={`admin-preview-card ${editor.featured ? 'featured' : ''}`}>
-                  <div className="publication-card-top"><span className="publication-flag">{editor.featured ? 'FEATURED / PREVIEW' : 'FIELD NOTE / PREVIEW'}</span><ArrowUpRight size={16} /></div>
+                  <div className="publication-card-top"><span className="publication-flag">{editor.featured ? 'FEATURED / PREVIEW' : 'ARTICLE / PREVIEW'}</span><ArrowUpRight size={16} /></div>
                   <div className="publication-media">
-                    <img src={editor.image.trim() || createBlogImage(editor.title || 'Field note', editor.category)} alt={editor.imageAlt || editor.title || 'Field note preview'} />
+                    <img src={editor.image.trim() || createBlogImage(editor.title || 'Article', editor.category)} alt={editor.imageAlt || editor.title || 'Article preview'} />
                   </div>
                   <span className="publication-category">{editor.category}</span>
                   <h3>{editor.title || 'Your article title appears here.'}</h3>
-                  <p>{editor.excerpt || 'The short article excerpt will appear here and introduce the signal before the reader opens it.'}</p>
+                  <p>{editor.excerpt || 'A short description of the article will appear here.'}</p>
                   <div className="publication-meta"><span><CalendarDays size={13} /> {formatPostDate()}</span><span><Clock3 size={13} /> {estimateReadTime(editor.content)}</span></div>
                   <div className="publication-tags">{(previewTags.length ? previewTags : ['Tag one', 'Tag two']).map((tag) => <span key={tag}>{tag}</span>)}</div>
                 </div>
@@ -1329,22 +1347,23 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
               </aside>
             </div>
           </div>
-        </section>
+          )}
 
-        <section className="section-wrap admin-library">
+        {activeAdminSection === 'publications' && (
+        <div className="admin-main-panel admin-library">
           <div className="section-head-row">
-            <div><span className="eyebrow">ARCHIVE / POSTGRESQL</span><h2 className="section-title">Publication <em>buffer.</em></h2></div>
+            <div><span className="eyebrow">POSTGRESQL</span><h2 className="section-title">Saved <em>articles.</em></h2></div>
             <span className="section-index">{String(posts.length).padStart(2, '0')} RECORDS</span>
           </div>
           {posts.length === 0 ? (
-            <div className="publication-empty"><span className="empty-code">DATABASE / EMPTY</span><h3>No publications in PostgreSQL yet.</h3><p>Create a field note above, save it as a draft, or publish it to the blog.</p></div>
+            <div className="publication-empty"><span className="empty-code">DATABASE / EMPTY</span><h3>No articles in PostgreSQL yet.</h3><p>Create an article above, save it as a draft or publish it.</p></div>
           ) : (
             <div className="admin-table">
               {posts.map((post) => (
                 <article className="admin-table-row" key={post.id}>
                   <div className={`admin-status-pill ${post.status}`}><span /> {post.status}</div>
                   <div className="admin-row-copy"><span>{post.category} / {post.date}</span><h3>{post.title}</h3></div>
-                  <div className="admin-row-meta">{post.readTime}</div>
+                  <div className="admin-row-meta">{post.readTime} · {publicationViews.get(post.id ?? '') ?? 0} views</div>
                   <div className="admin-row-actions">
                     {post.status === 'published' && <a href={`/blog/${post.slug}`} title="View"><Eye size={15} /></a>}
                     <button onClick={() => requestEdit(post)} title="Edit"><Edit3 size={15} /></button>
@@ -1354,6 +1373,74 @@ export function AdminPage({ initialPosts, categories }: { initialPosts: BlogPubl
               ))}
             </div>
           )}
+        </div>
+        )}
+
+        {activeAdminSection === 'analytics' && (
+        <div className="admin-main-panel admin-analytics">
+          <div className="section-head-row">
+            <div><span className="eyebrow">ANALYTICS</span><h2 className="section-title">Visitor <em>activity.</em></h2></div>
+            <span className="section-index">PRIVATE DATA</span>
+          </div>
+
+          <div className="analytics-summary">
+            <div><span>UNIQUE VISITORS</span><strong>{analytics.totalVisitors}</strong></div>
+            <div><span>PAGE VIEWS</span><strong>{analytics.totalPageViews}</strong></div>
+            <div><span>ARTICLE VIEWS</span><strong>{analytics.publicationViews.reduce((total, publication) => total + publication.views, 0)}</strong></div>
+          </div>
+
+          <div className="analytics-grid">
+            <section className="analytics-panel" aria-labelledby="recent-visitors-title">
+              <div className="analytics-panel-head"><h3 id="recent-visitors-title">Recent visitors</h3><span>Last 25 IP addresses</span></div>
+              {analytics.recentVisitors.length === 0 ? (
+                <p className="analytics-empty">No visits recorded yet. Run the analytics SQL migration first.</p>
+              ) : (
+                <div className="analytics-list">
+                  {analytics.recentVisitors.map((visitor) => (
+                    <article className="analytics-visitor" key={visitor.ipAddress}>
+                      <div><strong>{visitor.ipAddress}</strong><span>{visitor.userAgent || 'Unknown browser'}</span></div>
+                      <div><strong>{visitor.pageViews} view{visitor.pageViews === 1 ? '' : 's'}</strong><span>Last seen {formatAnalyticsDate(visitor.lastSeen)}</span></div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className="analytics-panel" aria-labelledby="publication-views-title">
+              <div className="analytics-panel-head"><h3 id="publication-views-title">Publication views</h3><span>Published articles</span></div>
+              {analytics.publicationViews.length === 0 ? (
+                <p className="analytics-empty">No published articles or views yet.</p>
+              ) : (
+                <div className="analytics-list">
+                  {analytics.publicationViews.map((publication) => (
+                    <article className="analytics-publication" key={publication.id}>
+                      <a href={`/blog/${publication.slug}`}>{publication.title}</a>
+                      <strong>{publication.views} view{publication.views === 1 ? '' : 's'}</strong>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className="analytics-panel analytics-panel-wide" aria-labelledby="individual-views-title">
+              <div className="analytics-panel-head"><h3 id="individual-views-title">Article view details</h3><span>Last 100 views</span></div>
+              {analytics.recentPublicationViews.length === 0 ? (
+                <p className="analytics-empty">No article views have been recorded yet.</p>
+              ) : (
+                <div className="analytics-list">
+                  {analytics.recentPublicationViews.map((view) => (
+                    <article className="analytics-view" key={view.id}>
+                      <a href={`/blog/${view.slug}`}>{view.title}</a>
+                      <span>{view.ipAddress || 'IP not available'}</span>
+                      <time dateTime={view.viewedAt}>{formatAnalyticsDate(view.viewedAt)}</time>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
+        </div>
+        )}
         </section>
       </main>
       <SiteFooter />
@@ -1377,8 +1464,8 @@ export function ArticlePage({ publication }: { publication: BlogPublication }) {
       <SiteHeader />
       <main className="site-content article-content">
         <article className="section-wrap article-page">
-          <a className="text-link article-back" href="/blog"><ArrowDown className="article-back-icon" size={14} /> Back to field notes</a>
-          <div className="article-kicker"><span className="publication-category">{post.category}</span><span>FIELD NOTE / {post.date}</span></div>
+          <a className="text-link article-back" href="/blog"><ArrowDown className="article-back-icon" size={14} /> Back to blog</a>
+          <div className="article-kicker"><span className="publication-category">{post.category}</span><span>ARTICLE / {post.date}</span></div>
           <h1>{post.title}</h1>
           <p className="article-lead">{post.excerpt}</p>
           <div className="article-image"><img src={post.image} alt={post.imageAlt || post.title} /></div>
@@ -1386,7 +1473,7 @@ export function ArticlePage({ publication }: { publication: BlogPublication }) {
           <div className="article-rule" />
           <div className="article-body" dangerouslySetInnerHTML={{ __html: normalizeArticleHtml(post.content) }} />
           <div className="publication-tags article-tags">{post.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-          <div className="article-end"><span className="pulse-dot" /> END OF TRANSMISSION</div>
+          <div className="article-end"><span className="pulse-dot" /> END OF ARTICLE</div>
         </article>
       </main>
       <SiteFooter />
@@ -1408,16 +1495,16 @@ export function PortfolioHome() {
             <div>
               <div className="hero-kicker reveal"><span className="pulse-dot" /><span className="eyebrow">Cloud Security &amp; DevOps · Morocco</span></div>
               <h1 className="hero-title reveal delay-1" data-testid="text-hero-title">
-                Securing
-                <span className="line-accent">the signal.</span>
-                <span className="line-quiet font-light">Building the system around it.</span>
+                Building
+                <span className="line-accent">secure systems.</span>
+                <span className="line-quiet font-light">Learning and improving every day.</span>
               </h1>
               <p className="hero-copy reveal delay-2">
-                I&apos;m <strong>Othman El-Mansour</strong>, a Network &amp; Telecommunications Systems Engineering student building secure, observable infrastructure across cloud, networks, and DevOps.
+                I&apos;m <strong>Othman El-Mansour</strong>, a Network &amp; Telecommunications Systems Engineering student. I work with cloud, networks, security and DevOps.
               </p>
               <div className="hero-actions reveal delay-3">
-                <button className="cv-button" onClick={() => scrollToSection('contact')} data-testid="button-start-conversation">Start a conversation <ArrowUpRight size={14} /></button>
-                <a className="text-link" href={cvPath} target="_blank" rel="noreferrer" data-testid="link-cv-hero">Read my CV <ArrowDown size={14} /></a>
+                <button className="cv-button" onClick={() => scrollToSection('contact')} data-testid="button-start-conversation">Contact me <ArrowUpRight size={14} /></button>
+                <a className="text-link" href={cvPath} target="_blank" rel="noreferrer" data-testid="link-cv-hero">View my CV <ArrowDown size={14} /></a>
               </div>
               <div className="hero-meta reveal delay-4">
                 <span><Globe2 size={13} /> Khemisset, Morocco</span>
@@ -1436,10 +1523,10 @@ export function PortfolioHome() {
 
         <div className="signal-strip">
           <div className="section-wrap signal-strip-inner">
-            <div className="signal-stat"><div className="signal-value">03</div><div className="signal-label">field engagements</div></div>
-            <div className="signal-stat"><div className="signal-value">02</div><div className="signal-label">security projects</div></div>
-            <div className="signal-stat"><div className="signal-value">L2—L7</div><div className="signal-label">systems perspective</div></div>
-            <div className="signal-stat"><div className="signal-value">MA</div><div className="signal-label">based in Morocco</div></div>
+            <div className="signal-stat"><div className="signal-value">03</div><div className="signal-label">work experiences</div></div>
+            <div className="signal-stat"><div className="signal-value">02</div><div className="signal-label">main projects</div></div>
+            <div className="signal-stat"><div className="signal-value">L2—L7</div><div className="signal-label">network knowledge</div></div>
+            <div className="signal-stat"><div className="signal-value">MA</div><div className="signal-label">Morocco</div></div>
           </div>
         </div>
 
@@ -1447,16 +1534,16 @@ export function PortfolioHome() {
           <div className="about-grid">
             <div>
               <span className="eyebrow">01 / Profile</span>
-              <h2 className="section-heading" style={{ marginTop: 22 }}>The person behind<br /><em>the packets.</em></h2>
+              <h2 className="section-heading" style={{ marginTop: 22 }}>A little<br /><em>about me.</em></h2>
             </div>
             <div>
-              <p className="section-intro"><strong>Network &amp; Telecommunications Systems Engineering student</strong> with hands-on experience in network security, infrastructure monitoring, and intrusion detection.</p>
-              <p className="section-intro">I work comfortably across Linux administration, routing, switching, VLANs, TCP/IP, and modern cloud/container technologies. My current edge is growing the bridge between reliable infrastructure and secure delivery.</p>
+              <p className="section-intro"><strong>Network &amp; Telecommunications Systems Engineering student</strong> with practical experience in security, monitoring and web development.</p>
+              <p className="section-intro">I work with Linux, networks, Docker and Kubernetes. My goal is to build systems that are reliable, secure and easy to understand.</p>
               <div className="focus-grid">
-                <div className="focus-card"><ShieldCheck className="focus-icon" size={21} /><h3>Reduce blind spots</h3><p>Security monitoring that turns noisy infrastructure into legible signals.</p></div>
-                <div className="focus-card"><Network className="focus-icon" size={21} /><h3>Understand the path</h3><p>Routing, switching, and protocols from the packet up.</p></div>
-                <div className="focus-card"><Terminal className="focus-icon" size={21} /><h3>Make it repeatable</h3><p>Automation and CI/CD habits for changes you can trust.</p></div>
-                <div className="focus-card"><Cloud className="focus-icon" size={21} /><h3>Keep learning forward</h3><p>Cloud and containers as the next layer of secure operations.</p></div>
+                <div className="focus-card"><ShieldCheck className="focus-icon" size={21} /><h3>Security</h3><p>Find risks and protect systems.</p></div>
+                <div className="focus-card"><Network className="focus-icon" size={21} /><h3>Networks</h3><p>Connect devices and understand how data moves.</p></div>
+                <div className="focus-card"><Terminal className="focus-icon" size={21} /><h3>Automation</h3><p>Automate tasks and deliver changes with CI/CD.</p></div>
+                <div className="focus-card"><Cloud className="focus-icon" size={21} /><h3>Cloud</h3><p>Run applications with cloud and container tools.</p></div>
               </div>
             </div>
           </div>
@@ -1465,7 +1552,7 @@ export function PortfolioHome() {
         <section className="section-wrap section-pad" id="experience">
           <div className="section-head-row">
             <div><span className="eyebrow">02 / Experience</span><h2 className="section-heading" style={{ marginTop: 22 }}>Field<br /><em>experience.</em></h2></div>
-            <span className="section-index">Three missions · one trajectory</span>
+            <span className="section-index">Three work experiences</span>
           </div>
           <div className="timeline">
             {experience.map((item, index) => {
@@ -1478,7 +1565,7 @@ export function PortfolioHome() {
                     <div className="role-top"><div><h3 className="role-title">{item.role}</h3><div className="role-company">{item.company}</div></div><span className="role-badge">{item.badge}</span></div>
                     <p className="role-summary">{item.summary}</p>
                     <button className={`detail-toggle ${isOpen ? 'open' : ''}`} onClick={() => setOpenExperience(isOpen ? -1 : index)} data-testid={`button-details-${index}`}>
-                      {isOpen ? 'Hide mission details' : 'Read mission details'} <ChevronDown size={14} />
+                      {isOpen ? 'Hide details' : 'View details'} <ChevronDown size={14} />
                     </button>
                     {isOpen && <ul className="role-details">{item.details.map((detail) => <li key={detail}>{detail}</li>)}</ul>}
                   </div>
@@ -1491,8 +1578,8 @@ export function PortfolioHome() {
         <section className="projects-section section-pad" id="projects">
           <div className="section-wrap">
             <div className="section-head-row">
-              <div><span className="eyebrow">03 / Projects</span><h2 className="section-heading" style={{ marginTop: 22 }}>Proof of<br /><em>practice.</em></h2></div>
-              <span className="section-index">Built to be useful, not ornamental</span>
+              <div><span className="eyebrow">03 / Projects</span><h2 className="section-heading" style={{ marginTop: 22 }}>What I<br /><em>have built.</em></h2></div>
+              <span className="section-index">Practical technical projects</span>
             </div>
             <div className="project-grid">
               {projects.map((project, index) => (
@@ -1510,7 +1597,7 @@ export function PortfolioHome() {
           <div className="skills-grid">
             <div>
               <span className="eyebrow">04 / Stack</span>
-              <h2 className="section-heading" style={{ marginTop: 22 }}>Tools for<br /><em>the signal.</em></h2>
+              <h2 className="section-heading" style={{ marginTop: 22 }}>My technical<br /><em>skills.</em></h2>
               <div className="skill-tabs" role="tablist" aria-label="Skill categories">
                 {skillGroups.map((group, index) => {
                   const Icon = group.icon;
@@ -1519,7 +1606,7 @@ export function PortfolioHome() {
               </div>
             </div>
             <div className="skill-display" role="tabpanel" data-testid="panel-skills">
-              <div className="skill-display-head"><div><ActiveIcon className="focus-icon" size={22} /><h3 style={{ marginTop: 20 }}>{skillGroups[activeSkill].label}</h3></div><span className="skill-count">{String(skillGroups[activeSkill].skills.length).padStart(2, '0')} SIGNALS</span></div>
+              <div className="skill-display-head"><div><ActiveIcon className="focus-icon" size={22} /><h3 style={{ marginTop: 20 }}>{skillGroups[activeSkill].label}</h3></div><span className="skill-count">{String(skillGroups[activeSkill].skills.length).padStart(2, '0')} SKILLS</span></div>
               <div className="skill-chips">{skillGroups[activeSkill].skills.map((skill) => <span className="skill-chip" key={skill}>{skill}</span>)}</div>
               <p className="skill-note">/ {skillGroups[activeSkill].note}</p>
             </div>
@@ -1528,16 +1615,16 @@ export function PortfolioHome() {
 
         <section className="section-wrap section-pad" id="education">
           <div className="education-layout">
-            <div><span className="eyebrow">05 / Formation</span><h2 className="section-heading" style={{ marginTop: 22 }}>Always<br /><em>in motion.</em></h2><p className="section-intro" style={{ marginTop: 30 }}>A technical foundation built across software, networks, systems administration, and security.</p></div>
+            <div><span className="eyebrow">05 / Education</span><h2 className="section-heading" style={{ marginTop: 22 }}>My<br /><em>education.</em></h2><p className="section-intro" style={{ marginTop: 30 }}>I studied software, networks, systems and security.</p></div>
             <div className="education-list">{education.map((item, index) => <article className="education-item" key={item.title} data-testid={`card-education-${index}`}><div className="education-years">{item.years}</div><div><h3>{item.title}</h3><p>{item.school}</p><p>{item.detail}</p>{item.honor && <span className="honor">{item.honor}</span>}</div></article>)}</div>
           </div>
         </section>
 
         <section className="section-wrap contact-section" id="contact">
           <div className="contact-panel">
-            <span className="eyebrow">06 / Open channel</span>
-            <h2 style={{ marginTop: 25 }}>Let&apos;s build a<br /><em>safer system.</em></h2>
-            <p>If the problem involves infrastructure, visibility, and trust, I&apos;d like to hear about it. Let&apos;s build systems that stay understandable under pressure.</p>
+            <span className="eyebrow">06 / Contact</span>
+            <h2 style={{ marginTop: 25 }}>Let&apos;s work<br /><em>together.</em></h2>
+            <p>Contact me for a job, a project or a technical question. I will be happy to talk with you.</p>
             <div className="contact-links">
               <a className="contact-link" href="mailto:elmansourothman7@gmail.com" data-testid="link-email"><Mail size={15} /> elmansourothman7@gmail.com</a>
               <a className="contact-link" href="tel:0684756805" data-testid="link-phone"><span className="mono">+212</span> 06 84 75 68 05</a>

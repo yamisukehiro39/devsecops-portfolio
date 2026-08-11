@@ -11,23 +11,23 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <StaticContentPage
-      eyebrow="CONTACT / OPEN CHANNEL"
-      title="Get in touch."
-      intro="For technical questions, collaboration, corrections, or professional opportunities, use one of the channels below."
+      eyebrow="CONTACT"
+      title="Contact me."
+      intro="You can contact me for a job, a project or a technical question."
     >
       <h2>Email</h2>
       <p><a href="mailto:elmansourothman7@gmail.com">elmansourothman7@gmail.com</a></p>
 
-      <h2>Professional profiles</h2>
+      <h2>Online profiles</h2>
       <p>
         <a href="https://linkedin.com/in/el-mansour-othman" target="_blank" rel="noreferrer">LinkedIn</a>
         {' · '}
         <a href="https://github.com/yamisukehiro39" target="_blank" rel="noreferrer">GitHub</a>
       </p>
 
-      <h2>About replies</h2>
+      <h2>Messages</h2>
       <p>
-        I read messages related to the portfolio, technical articles, infrastructure security and professional collaboration. Please avoid sending credentials, private keys, passwords or other sensitive information.
+        I will reply as soon as I can. Please do not send passwords, private keys or other sensitive information.
       </p>
     </StaticContentPage>
   );

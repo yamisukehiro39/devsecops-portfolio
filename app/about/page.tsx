@@ -12,27 +12,27 @@ export default function AboutPage() {
   return (
     <StaticContentPage
       eyebrow="ABOUT / PROFILE"
-      title="About Othman El-Mansour."
-      intro="I build and study secure, observable infrastructure across cloud, networks, systems and DevOps workflows."
+      title="About me."
+      intro="I am Othman El-Mansour. I study networks, cloud, security and DevOps."
     >
       <h2>Profile</h2>
       <p>
-        I am Othman El-Mansour, a Network &amp; Telecommunications Systems Engineering student focused on DevSecOps, cloud security, cybersecurity, networking and infrastructure observability.
+        I am a Network &amp; Telecommunications Systems Engineering student. I enjoy building systems that are secure, reliable and easy to monitor.
       </p>
 
       <h2>Technical focus</h2>
       <p>
-        My work connects Linux administration, routing and switching, Kubernetes, CI/CD, monitoring and security controls. I am especially interested in systems that remain understandable and secure under operational pressure.
+        I work with Linux, networks, Docker, Kubernetes, CI/CD and monitoring tools. I also learn how to protect systems from security threats.
       </p>
 
       <h2>What I publish</h2>
       <p>
-        The blog contains practical field notes about architecture, troubleshooting, security controls, deployment workflows and lessons learned while building infrastructure projects.
+        I share simple guides, project lessons and solutions to technical problems.
       </p>
 
       <h2>Editorial approach</h2>
       <p>
-        Articles are written to explain context, trade-offs and implementation decisions. If you notice an error or outdated statement, you can contact me so I can review it.
+        I try to make every article clear and useful. You can contact me if you find an error.
       </p>
     </StaticContentPage>
   );

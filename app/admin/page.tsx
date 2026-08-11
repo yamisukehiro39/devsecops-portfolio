@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { AdminPage } from '../../components/PortfolioClient';
 import { getCurrentAdmin } from '../../lib/auth/session';
 import { getAllPostsForAdmin, getBlogCategories } from '../../lib/blog-db';
+import { getAdminAnalytics } from '../../lib/analytics-db';
 
 export const metadata: Metadata = {
   title: 'Blog Admin',
@@ -19,10 +20,14 @@ export default async function Page() {
     redirect('/login');
   }
 
-  const [posts, categories] = await Promise.all([
+  const [posts, categories, analytics] = await Promise.all([
     getAllPostsForAdmin(),
     getBlogCategories(),
+    getAdminAnalytics().catch((error) => {
+      console.error('Admin analytics query failed:', error);
+      return { totalVisitors: 0, totalPageViews: 0, recentVisitors: [], publicationViews: [], recentPublicationViews: [] };
+    }),
   ]);
 
-  return <AdminPage initialPosts={posts} categories={categories} />;
+  return <AdminPage initialPosts={posts} categories={categories} analytics={analytics} />;
 }
