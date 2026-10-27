@@ -13,26 +13,26 @@ export default function AboutPage() {
     <StaticContentPage
       eyebrow="ABOUT / PROFILE"
       title="About me."
-      intro="I am Othman El-Mansour. I study networks, cloud, security and DevOps."
+      intro="I am a Network and Telecommunications Systems Engineering student in Morocco, focused on secure and reliable infrastructure."
     >
       <h2>Profile</h2>
       <p>
-        I am a Network &amp; Telecommunications Systems Engineering student. I enjoy building systems that are secure, reliable and easy to monitor.
+        I am studying Network &amp; Telecommunications Systems Engineering at ENSA Kénitra, with a focus on network and information systems security. My studies build on a DUT in Computer Engineering from EST Beni Mellal, where I graduated with high honors.
       </p>
 
       <h2>Technical focus</h2>
       <p>
-        I work with Linux, networks, Docker, Kubernetes, CI/CD and monitoring tools. I also learn how to protect systems from security threats.
+        My practical experience includes network security monitoring, web development and building tools for uptime and response-time monitoring. I work with Linux, networking, Docker, Kubernetes, CI/CD and tools such as Snort, Zabbix and Uptime Kuma.
       </p>
 
       <h2>What I publish</h2>
       <p>
-        I share simple guides, project lessons and solutions to technical problems.
+        I share practical notes about cloud security, networks, monitoring and DevOps, including lessons from projects and technical problems I have worked through.
       </p>
 
       <h2>Editorial approach</h2>
       <p>
-        I try to make every article clear and useful. You can contact me if you find an error.
+        I aim to make each article clear, useful and grounded in practical work. You can contact me if you spot an error or want to discuss a topic.
       </p>
     </StaticContentPage>
   );

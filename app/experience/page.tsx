@@ -13,24 +13,24 @@ export default function ExperiencePage() {
     <StaticContentPage
       eyebrow="EXPERIENCE / FIELD WORK"
       title="My experience."
-      intro="I have worked on network security, monitoring and web development."
+      intro="Three internships across network security, infrastructure monitoring and web development."
     >
       <h2>Network Security & Monitoring Intern — SkyVaults</h2>
       <p><strong>06.2025 — 08.2025 · Agadir, Morocco</strong></p>
       <p>
-        Used Uptime Kuma, Zabbix and Snort to monitor systems and detect security problems. I also built GeoMonitor to check uptime and response time from different countries.
+        Monitored servers and networks for availability and security issues. Set up Uptime Kuma, Zabbix and Snort, and built GeoMonitor to check uptime and response time across geographic regions. Connected Snort alerts to monitoring dashboards and improved alerting for easier investigation.
       </p>
 
       <h2>Web Developer Intern — BigBang Center</h2>
       <p><strong>04.2024 — 05.2024 · Beni Mellal, Morocco</strong></p>
       <p>
-        Built an inventory web application with Python and a database. Users could add, view, edit and delete products.
+        Built an inventory web application that lets users create, view, update and delete products, using HTML, CSS, JavaScript, Python and a relational database.
       </p>
 
       <h2>Web Developer Intern — BigBang Center</h2>
       <p><strong>06.2023 — 08.2023 · Beni Mellal, Morocco</strong></p>
       <p>
-        Built an online store for handmade clothing with HTML, CSS, JavaScript, Python and Django.
+        Built an online store for handmade clothing with product listings, a cart and checkout, using HTML, CSS, JavaScript, Python and Django.
       </p>
     </StaticContentPage>
   );

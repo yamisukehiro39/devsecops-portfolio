@@ -13,19 +13,19 @@ export default function ProjectsPage() {
     <StaticContentPage
       eyebrow="PROJECTS / MY WORK"
       title="My projects."
-      intro="Here are some projects I built to improve monitoring and security."
+      intro="Practical projects focused on uptime, network visibility and security monitoring."
     >
       <h2>GeoMonitor</h2>
       <p>
-        A tool for Uptime Kuma that checks website uptime and response time from different locations.
+        GeoMonitor extends Uptime Kuma monitoring with uptime and response-time checks from different geographic locations. It helps compare service reachability and latency across regions.
       </p>
-      <p><strong>Tools:</strong> Uptime Kuma, monitoring and latency tracking.</p>
+      <p><strong>Tools:</strong> Uptime Kuma, monitoring, geographic probes and latency tracking.</p>
 
       <h2>Network Security Monitoring Stack</h2>
       <p>
-        A system that uses Snort, Zabbix and Uptime Kuma to monitor servers and send alerts when a problem appears.
+        A monitoring setup combining network intrusion detection and infrastructure health checks. Snort alerts connect with Zabbix and Uptime Kuma monitoring so issues are easier to see and investigate.
       </p>
-      <p><strong>Tools:</strong> Snort, Zabbix, Uptime Kuma, alerts and dashboards.</p>
+      <p><strong>Tools:</strong> Snort, Zabbix, Uptime Kuma, alerting and dashboards.</p>
 
       <h2>My goal</h2>
       <p>
