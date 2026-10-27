@@ -20,6 +20,8 @@ import {
   ExternalLink,
   Github,
   Globe2,
+  Building2,
+  Users,
   Linkedin,
   Mail,
   Menu,
@@ -902,7 +904,7 @@ export function AdminPage({ initialPosts, categories, analytics }: { initialPost
   const [notice, setNotice] = useState('Connected to PostgreSQL. Ready for a new article.');
   const [confirmation, setConfirmation] = useState<ConfirmationRequest | null>(null);
   const [confirmBusy, setConfirmBusy] = useState(false);
-  const [activeAdminSection, setActiveAdminSection] = useState<'editor' | 'publications' | 'analytics'>('editor');
+  const [activeAdminSection, setActiveAdminSection] = useState<'overview' | 'editor' | 'publications' | 'analytics'>('overview');
 
   const publishedCount = posts.filter((post) => post.status === 'published').length;
   const draftCount = posts.filter((post) => post.status === 'draft').length;
@@ -1158,22 +1160,23 @@ export function AdminPage({ initialPosts, categories, analytics }: { initialPost
     <div className="portfolio-shell admin-shell">
       <AdminHeader onLogoutRequest={requestLogout} />
       <main className="site-content admin-content">
-        <section className="admin-hero section-wrap">
+        <section className="admin-hero section-wrap admin-dashboard-hero">
           <div>
-            <div className="hero-kicker reveal"><span className="pulse-dot" /><span className="eyebrow">PUBLISHING / CONTROL PLANE</span></div>
-            <h1 className="admin-title reveal delay-1">Editorial<br /><span>control.</span></h1>
-            <p className="admin-intro reveal delay-2">Write, preview, save and publish blog articles.</p>
+            <div className="hero-kicker reveal"><span className="pulse-dot" /><span className="eyebrow">ADMIN / DASHBOARD</span></div>
+            <h1 className="admin-title reveal delay-1">Portfolio <span>admin.</span></h1>
+            <p className="admin-intro reveal delay-2">Manage publications and understand your audience from one place.</p>
           </div>
           <div className="admin-status-grid reveal delay-2">
             <div className="admin-stat"><span>PUBLISHED</span><strong>{String(publishedCount).padStart(2, '0')}</strong></div>
-            <div className="admin-stat"><span>DRAFT BUFFER</span><strong>{String(draftCount).padStart(2, '0')}</strong></div>
-            <div className="admin-stat"><span>EDITOR STATE</span><strong>{editingId ? 'EDIT' : 'NEW'}</strong></div>
+            <div className="admin-stat"><span>VISITORS</span><strong>{analytics.totalVisitors}</strong></div>
+            <div className="admin-stat"><span>PAGE VIEWS</span><strong>{analytics.totalPageViews}</strong></div>
           </div>
         </section>
 
         <section className="section-wrap admin-console">
           <aside className="admin-rail">
-            <div className="admin-rail-label"><LayoutDashboard size={15} /> CONSOLE / 01</div>
+            <div className="admin-rail-label"><LayoutDashboard size={15} /> ADMIN MENU</div>
+            <button className={`admin-rail-action ${activeAdminSection === 'overview' ? 'active' : ''}`} onClick={() => setActiveAdminSection('overview')}><LayoutDashboard size={15} /> Overview</button>
             <button className={`admin-rail-action ${activeAdminSection === 'editor' ? 'active' : ''}`} onClick={requestNewPost}><FilePlus2 size={15} /> New article</button>
             <button className={`admin-rail-action ${activeAdminSection === 'publications' ? 'active' : ''}`} onClick={() => setActiveAdminSection('publications')}><BookOpen size={15} /> Publications</button>
             <button className={`admin-rail-action ${activeAdminSection === 'analytics' ? 'active' : ''}`} onClick={() => setActiveAdminSection('analytics')}><Radar size={15} /> Analytics</button>
@@ -1191,6 +1194,51 @@ export function AdminPage({ initialPosts, categories, analytics }: { initialPost
               ))}
             </div>
           </aside>
+
+          {activeAdminSection === 'overview' && (
+            <div className="admin-main-panel admin-overview">
+              <div className="admin-panel-head">
+                <div><span className="eyebrow">OVERVIEW</span><h2>Dashboard.</h2></div>
+                <span className="admin-notice"><span className="pulse-dot" /> PostgreSQL connected</span>
+              </div>
+
+              <div className="admin-overview-actions">
+                <button type="button" onClick={requestNewPost}><FilePlus2 size={19} /><span><strong>Create publication</strong><small>Write and publish a new blog article.</small></span><ArrowUpRight size={16} /></button>
+                <button type="button" onClick={() => setActiveAdminSection('publications')}><BookOpen size={19} /><span><strong>Manage publications</strong><small>{publishedCount} published · {draftCount} drafts</small></span><ArrowUpRight size={16} /></button>
+                <button type="button" onClick={() => setActiveAdminSection('analytics')}><Radar size={19} /><span><strong>Open analytics</strong><small>View visitor locations, ISPs and article traffic.</small></span><ArrowUpRight size={16} /></button>
+              </div>
+
+              <div className="admin-overview-grid">
+                <section className="admin-overview-card">
+                  <div className="admin-overview-card-head"><div><Users size={17} /><h3>Recent visitors</h3></div><button onClick={() => setActiveAdminSection('analytics')}>View all</button></div>
+                  {analytics.recentVisitors.length === 0 ? <p className="analytics-empty">No visitors recorded yet.</p> : (
+                    <div className="admin-overview-list">
+                      {analytics.recentVisitors.slice(0, 5).map((visitor) => (
+                        <article key={visitor.ipAddress}>
+                          <div><strong>{visitor.ipAddress}</strong><span>{[visitor.city, visitor.countryName].filter(Boolean).join(', ') || 'Location pending'}</span></div>
+                          <div><strong>{visitor.pageViews}</strong><span>views</span></div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                <section className="admin-overview-card">
+                  <div className="admin-overview-card-head"><div><BookOpen size={17} /><h3>Top publications</h3></div><button onClick={() => setActiveAdminSection('publications')}>Manage</button></div>
+                  {analytics.publicationViews.length === 0 ? <p className="analytics-empty">No publication views yet.</p> : (
+                    <div className="admin-overview-list">
+                      {analytics.publicationViews.slice(0, 5).map((publication) => (
+                        <article key={publication.id}>
+                          <div><strong>{publication.title}</strong><span>/blog/{publication.slug}</span></div>
+                          <div><strong>{publication.views}</strong><span>views</span></div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              </div>
+            </div>
+          )}
 
           {activeAdminSection === 'editor' && (
           <div className="admin-main-panel">
@@ -1398,8 +1446,9 @@ export function AdminPage({ initialPosts, categories, analytics }: { initialPost
                 <div className="analytics-list">
                   {analytics.recentVisitors.map((visitor) => (
                     <article className="analytics-visitor" key={visitor.ipAddress}>
-                      <div><strong>{visitor.ipAddress}</strong><span>{visitor.userAgent || 'Unknown browser'}</span></div>
-                      <div><strong>{visitor.pageViews} view{visitor.pageViews === 1 ? '' : 's'}</strong><span>Last seen {formatAnalyticsDate(visitor.lastSeen)}</span></div>
+                      <div className="analytics-visitor-identity"><strong>{visitor.ipAddress}</strong><span>{visitor.userAgent || 'Unknown browser'}</span></div>
+                      <div className="analytics-visitor-network"><span><Globe2 size={13} /> {[visitor.city, visitor.countryName].filter(Boolean).join(', ') || 'Location pending'}</span><span><Building2 size={13} /> {visitor.isp || 'ISP pending'} {visitor.asn ? `· ${visitor.asn}` : ''}</span></div>
+                      <div className="analytics-visitor-activity"><strong>{visitor.pageViews} view{visitor.pageViews === 1 ? '' : 's'}</strong><span>Last seen {formatAnalyticsDate(visitor.lastSeen)}</span></div>
                     </article>
                   ))}
                 </div>
@@ -1430,8 +1479,9 @@ export function AdminPage({ initialPosts, categories, analytics }: { initialPost
                 <div className="analytics-list">
                   {analytics.recentPublicationViews.map((view) => (
                     <article className="analytics-view" key={view.id}>
-                      <a href={`/blog/${view.slug}`}>{view.title}</a>
-                      <span>{view.ipAddress || 'IP not available'}</span>
+                      <div><a href={`/blog/${view.slug}`}>{view.title}</a><small>{view.ipAddress || 'IP not available'}</small></div>
+                      <span><Globe2 size={13} /> {[view.city, view.countryName].filter(Boolean).join(', ') || 'Location pending'}</span>
+                      <span><Building2 size={13} /> {view.isp || 'ISP pending'}</span>
                       <time dateTime={view.viewedAt}>{formatAnalyticsDate(view.viewedAt)}</time>
                     </article>
                   ))}

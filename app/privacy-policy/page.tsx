@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
       <p>The private admin area may save temporary session information in the browser. Regular visitors do not use these admin tools.</p>
 
       <h2>Visitor analytics</h2>
-      <p>This site records a visitor&apos;s IP address, browser information, visit time and page views. This helps the site owner understand traffic and article views. This information is only available in the private admin panel.</p>
+      <p>This site records a visitor&apos;s IP address, browser information, visit time and page views. The IP address may also be used to estimate the country, city, time zone and internet provider. This helps the site owner understand traffic and article views. This information is only available in the private admin panel.</p>
 
       <h2>Advertising and Google AdSense</h2>
       <p>If ads are enabled, Google and its partners may use cookies to show and measure ads. This depends on your location, consent choices and Google settings.</p>

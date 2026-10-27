@@ -12,7 +12,7 @@ This version keeps the existing visual design while moving the blog and admin pu
 - Tags are stored in `tags` + `blog_post_tags`.
 - The category selector reads directly from the `categories` table.
 - Browser `localStorage` is no longer used for blog publications.
-- The admin panel shows recent visitor IP addresses and publication view counts after the analytics migration is run.
+- The admin panel shows recent visitor IP addresses, approximate country/city, ISP and publication view counts after the analytics migration is run.
 
 ## Confirmation dialogs
 
@@ -59,6 +59,8 @@ To enable visitor and publication analytics, run the following file once:
 ```
 
 It creates `site_visitors` and `publication_views`. Visitor IP addresses and browser information are personal data, so access is restricted to the authenticated admin panel and disclosed in the privacy policy.
+
+The same migration can safely be run again to add the location and ISP columns to an existing `site_visitors` table. IP metadata is fetched once per visitor from `api.country.is` and cached in PostgreSQL. Location data is approximate and may represent a VPN, proxy, mobile gateway or ISP network rather than the visitor&apos;s exact location.
 
 ## Environment
 
